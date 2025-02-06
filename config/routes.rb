@@ -5,7 +5,7 @@ Rails.application.routes.draw do
         sessions: "api/v1/users/sessions"
       }
       namespace :admin do
-        resources :users, only: [ :index, :update, :destroy ]
+        resources :users, only: [ :index, :update, :destroy, :register ]
         get "users/current", to: "users#current"
       end
     end

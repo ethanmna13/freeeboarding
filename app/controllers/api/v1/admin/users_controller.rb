@@ -14,6 +14,10 @@ class Api::V1::Admin::UsersController < ApplicationController
     end
   end
 
+  def register
+    @user = User.new(register_params)
+  end
+
   def update
     if @user.update(user_params)
       render json: @user.slice(:id, :name, :role, :account_status)
@@ -40,5 +44,9 @@ class Api::V1::Admin::UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name, :role, :account_status)
+  end
+
+  def register_params
+    params.require(:user).permit(:email, :name, :role, :account_status, :encrypted_password)
   end
 end
