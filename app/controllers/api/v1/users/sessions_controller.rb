@@ -1,19 +1,15 @@
-class Api::V1::Users::SessionsController < Devise::SessionsController
-  respond_to :json
+class Api::V1::Users::SessionsController < DeviseTokenAuth::SessionsController
+  private
 
-  def create
-    user = User.find_for_database_authentication(email: params[:user][:email])
-
-    if user&.valid_password?(params[:user][:password])
-      sign_in(user)
-      render json: { message: "Logged in successfully", user: user }, status: :ok
-    else
-      render json: { error: "Invalid email or password" }, status: :unauthorized
-    end
+  def render_create_success
+    render json: {
+      success: true,
+      message: "Signed in successfully",
+      data: resource_data(resource_json: @resource)
+    }
   end
 
-  def destroy
-    sign_out(current_user)
-    render json: { message: "Logged out successfully" }, status: :ok
+  def render_create_error_bad_credentials
+    render json: { success: false, errors: [ "Invalid email or password" ] }, status: :unauthorized
   end
 end

@@ -1,16 +1,16 @@
-import React from 'react';
-import { Route, BrowserRouter as Router } from "react-router-dom";
-import LoginForm from './components/LoginForm'; 
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import LoginForm from './components/LoginForm';
+import AdminUsersPage from './components/Admin/AdminUsersPage';
 
-import './App.css'; 
+import './App.css';
 
 function App() {
   return (
     <Router>
-    <>
-      <LoginForm />
-      
-    </>
+      <Routes>
+        <Route path="/" element={<LoginForm />} />
+        <Route path="/admin-users" element={<AdminUsersPage />} />
+      </Routes>
     </Router>
   );
 }

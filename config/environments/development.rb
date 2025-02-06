@@ -1,6 +1,9 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
+  Rails.application.config.session_store :cookie_store, key: "freeeboarding_session", domain: :all, same_site: :none, secure: Rails.env.production?
+  Rails.application.config.action_dispatch.cookies_same_site_protection = :none
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Make code changes take effect immediately without server restart.

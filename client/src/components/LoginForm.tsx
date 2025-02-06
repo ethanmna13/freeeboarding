@@ -8,28 +8,23 @@ const LoginForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     try {
-
       const response = await axios.post(
-        '/api/v1/users/sign_in',
+        'http://localhost:3000/api/v1/auth/sign_in',
+        { email, password },
         {
-          user: {
-            email,
-            password
-          }
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'  
-          },
-          withCredentials: true
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          withCredentials: true,
         }
       );
-
+  
       if (response.status === 200) {
-        window.location.href = ''; 
+        localStorage.setItem('access-token', response.headers['access-token']);
+        localStorage.setItem('client', response.headers['client']);
+        localStorage.setItem('uid', response.headers['uid']);
+  
+        window.location.href = '/admin-users';
       }
     } catch (err) {
       setError('Invalid email or password');
