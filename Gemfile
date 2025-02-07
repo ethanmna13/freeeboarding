@@ -51,3 +51,5 @@ gem "devise_token_auth"
 gem "devise_invitable", "~> 2.0.0"
 
 gem "devise", "~> 4.9"
+
+gem "dotenv-rails"

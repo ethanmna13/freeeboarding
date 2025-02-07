@@ -3,7 +3,7 @@ import axios from "axios";
 import { Pencil, Trash2, UserPlus } from "lucide-react";
 
 interface User {
-  id: number;
+  id?: number;
   name: string;
   email: string;
   role: number;
@@ -35,9 +35,7 @@ const AdminUsersPage: React.FC = () => {
   const handleRegister = async () => {
     if (!registerUser) return;
     try {
-      await axios.post(`/api/v1/admin/users/}`, registerUser, {
-        withCredentials: true,
-      });
+      await axios.post("/api/v1/admin/users", registerUser, { withCredentials: true });
       fetchUsers();
       setRegisterUser(null);
     } catch (err) {
@@ -74,8 +72,10 @@ const AdminUsersPage: React.FC = () => {
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">User Management</h1>
-      <button className="px-4 py-2" onClick={() => (setRegisterUser)}>
-        <UserPlus className="text-green-500" />
+       {/* Register Button */}
+       <button onClick={() => setRegisterUser({ name: "", email: "", role: 2, account_status: 1 })} className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded">
+        <UserPlus />
+        Register User
       </button>
       {error && <p className="text-red-500">{error}</p>}
       <table className="min-w-full bg-white border border-gray-300">
@@ -107,82 +107,6 @@ const AdminUsersPage: React.FC = () => {
           ))}
         </tbody>
       </table>
-
-      {/* Register User Modal */}
-      {registerUser && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded shadow-md">
-            <h2 className="text-lg font-bold mb-4">Register User</h2>
-            <div className="mb-4">
-              <label className="block mb-1">Name</label>
-              <input
-                type="text"
-                value={registerUser.name}
-                onChange={(e) =>
-                  setEditUser({ ...registerUser, name: e.target.value })
-                }
-                className="border p-2 w-full rounded"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-1">Email</label>
-              <input
-                type="text"
-                value={registerUser.email}
-                onChange={(e) =>
-                  setEditUser({ ...registerUser, email: e.target.value })
-                }
-                className="border p-2 w-full rounded"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-1">Role</label>
-              <select
-                value={editUser.role}
-                onChange={(e) =>
-                  setEditUser({ ...editUser, role: Number(e.target.value) })
-                }
-                className="border p-2 w-full rounded"
-              >
-                <option value={0}>Admin</option>
-                <option value={1}>Mentor</option>
-                <option value={2}>Mentee</option>
-              </select>
-            </div>
-            <div className="mb-4">
-              <label className="block mb-1">Account Status</label>
-              <select
-                value={editUser.account_status}
-                onChange={(e) =>
-                  setEditUser({
-                    ...editUser,
-                    account_status: Number(e.target.value),
-                  })
-                }
-                className="border p-2 w-full rounded"
-              >
-                <option value={0}>Inactive</option>
-                <option value={1}>Active</option>
-              </select>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={handleUpdate}
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-              >
-                Save
-              </button>
-              <button
-                onClick={() => setEditUser(null)}
-                className="bg-gray-500 text-white px-4 py-2 rounded"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
 
       {/* Edit User Modal */}
       {editUser && (
@@ -270,8 +194,55 @@ const AdminUsersPage: React.FC = () => {
             </div>
           </div>
         </div>
-      )}
+    )}
+    {/* Register User Modal */}
+    {registerUser && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded shadow-md">
+            <h2 className="text-lg font-bold mb-4">Register User</h2>
+            <div className="mb-4">
+              <label className="block mb-1">Name</label>
+              <input
+                type="text"
+                value={registerUser.name}
+                onChange={(e) => setRegisterUser({ ...registerUser, name: e.target.value })}
+                className="border p-2 w-full rounded"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block mb-1">Email</label>
+              <input
+                type="email"
+                value={registerUser.email}
+                onChange={(e) => setRegisterUser({ ...registerUser, email: e.target.value })}
+                className="border p-2 w-full rounded"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block mb-1">Role</label>
+              <select
+                value={registerUser.role}
+                onChange={(e) => setRegisterUser({ ...registerUser, role: Number(e.target.value) })}
+                className="border p-2 w-full rounded"
+              >
+                <option value={0}>Admin</option>
+                <option value={1}>Mentor</option>
+                <option value={2}>Mentee</option>
+              </select>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={handleRegister} className="bg-green-500 text-white px-4 py-2 rounded">
+                Register
+              </button>
+              <button onClick={() => setRegisterUser(null)} className="bg-gray-500 text-white px-4 py-2 rounded">
+                Cancel
+              </button>
+             </div>
+             </div>
+     </div>
+    )}
     </div>
+    
   );
 };
 
