@@ -14,6 +14,18 @@ class Api::V1::Admin::UsersController < ApplicationController
     end
   end
 
+  def create
+    password = SecureRandom.hex(10)
+    user = User.new(user_params.merge(password: password, password_confirmation: password))
+
+    if user.save
+      UserMailer.welcome_email(user, password).deliver_now
+      render json: user, status: :created
+    else
+      render json: { error: user.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   def update
     if @user.update(user_params)
       render json: @user.slice(:id, :name, :role, :account_status)
@@ -39,6 +51,6 @@ class Api::V1::Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:name, :role, :account_status)
+    params.require(:user).permit(:email, :name, :role, :account_status)
   end
 end

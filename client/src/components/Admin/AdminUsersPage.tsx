@@ -3,10 +3,11 @@ import axios from "axios";
 import { Pencil, Trash2, UserPlus } from "lucide-react";
 
 interface User {
-  id: number;
+  id?: number;
   name: string;
-  role: number; // Enum: 0-admin, 1-mentor, 2-mentee
-  account_status: number; // Enum: 0-inactive, 1-active
+  email: string;
+  role: number;
+  account_status: number;
 }
 
 const AdminUsersPage: React.FC = () => {
@@ -14,6 +15,7 @@ const AdminUsersPage: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [editUser, setEditUser] = useState<User | null>(null);
   const [deleteUser, setDeleteUser] = useState<User | null>(null);
+  const [registerUser, setRegisterUser] = useState<User | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -27,6 +29,17 @@ const AdminUsersPage: React.FC = () => {
       setUsers(response.data);
     } catch (err) {
       setError("Failed to fetch users");
+    }
+  };
+
+  const handleRegister = async () => {
+    if (!registerUser) return;
+    try {
+      await axios.post("/api/v1/admin/users", registerUser, { withCredentials: true });
+      fetchUsers();
+      setRegisterUser(null);
+    } catch (err) {
+      setError("Failed to register user");
     }
   };
 
@@ -59,8 +72,10 @@ const AdminUsersPage: React.FC = () => {
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">User Management</h1>
-      <button className="px-4 py-2">
-        <UserPlus className="text-green-500" />
+       {/* Register Button */}
+       <button onClick={() => setRegisterUser({ name: "", email: "", role: 2, account_status: 1 })} className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded">
+        <UserPlus />
+        Register User
       </button>
       {error && <p className="text-red-500">{error}</p>}
       <table className="min-w-full bg-white border border-gray-300">
@@ -179,8 +194,55 @@ const AdminUsersPage: React.FC = () => {
             </div>
           </div>
         </div>
-      )}
+    )}
+    {/* Register User Modal */}
+    {registerUser && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded shadow-md">
+            <h2 className="text-lg font-bold mb-4">Register User</h2>
+            <div className="mb-4">
+              <label className="block mb-1">Name</label>
+              <input
+                type="text"
+                value={registerUser.name}
+                onChange={(e) => setRegisterUser({ ...registerUser, name: e.target.value })}
+                className="border p-2 w-full rounded"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block mb-1">Email</label>
+              <input
+                type="email"
+                value={registerUser.email}
+                onChange={(e) => setRegisterUser({ ...registerUser, email: e.target.value })}
+                className="border p-2 w-full rounded"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block mb-1">Role</label>
+              <select
+                value={registerUser.role}
+                onChange={(e) => setRegisterUser({ ...registerUser, role: Number(e.target.value) })}
+                className="border p-2 w-full rounded"
+              >
+                <option value={0}>Admin</option>
+                <option value={1}>Mentor</option>
+                <option value={2}>Mentee</option>
+              </select>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={handleRegister} className="bg-green-500 text-white px-4 py-2 rounded">
+                Register
+              </button>
+              <button onClick={() => setRegisterUser(null)} className="bg-gray-500 text-white px-4 py-2 rounded">
+                Cancel
+              </button>
+             </div>
+             </div>
+     </div>
+    )}
     </div>
+    
   );
 };
 
